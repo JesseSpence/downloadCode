@@ -1,0 +1,116 @@
+import { createStore } from 'vuex'
+
+export default createStore({
+  state: {
+    user: null,
+    products:null,
+    product: null,
+    asc: true,
+  },
+  mutations: {
+
+    setUser: (state, user) => {
+      state.user = user  ;
+    },
+
+    setProduct: (state, product) => {
+      state.product= product;
+    },
+    setProducts: (state, products) => {
+      state.products= products;
+    },
+    
+    sortProductsByPrice: (state) => {
+      state.product = state.product.sort((a, b) => {
+      return a.price - b.price;
+    });
+      if (!state.asc){
+      state.product.reverse();
+      }
+      state.asc = !state.asc;
+      },
+      },
+
+  actions: {
+    
+    login: async (context, payload) => {
+      const {email, password} = payload;
+      const response = await   fetch(`http://localhost:3000/users?email=${email}&password=${password}`);
+      const userData =await response.json();
+      context.commit("setUser",userData[0]);
+    },
+    ShowProducts: async (context) => {
+      fetch('http://localhost:3000/products')
+    .then((response) => response.json())
+    .then((product) => context.commit("setProduct",product))
+    },
+
+    // create user
+    signUp: async (context, data) => {
+      const{full_name, email, password, role} = data
+      fetch('http://localhost:3000/users', {
+        method: 'POST',
+        body: JSON.stringify({
+            full_name: full_name,
+            role: role,
+            email: email,
+            password: password,
+        }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => console.log(json));
+        }
+  },
+  // open one card
+  showProduct: async (context) => {
+    fetch("http://localhost:3000/products" + id)
+      .then((res) => res.json())
+      .then((product) => context.commit("setProduct", product));
+  },
+
+  // create a product
+  createProduct: async (context, payload) => {
+    const { artistName, artName, price, imgURL, description, category } =
+      payload;
+    fetch("http://localhost:3000/pieces", {
+      method: "POST",
+      body: JSON.stringify({
+        artistName: artistName,
+        artName: artName,
+        price: price,
+        imgURL: imgURL,
+        description: description,
+        category: category,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then(() => context.dispatch("ShowProducts"));
+  },
+
+  // edit products
+  updatePieces: async (context, piece) => {
+    fetch("http://localhost:3000/pieces" + piece.id, {
+      method: "PUT",
+      body: JSON.stringify(piece),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then(() => context.dispatch("ShowProducts"));
+  },
+
+  // delete 
+  deleteProduct: async (context, id) => {
+    fetch("http://localhost:3000/products" + id, {
+      method: "DELETE",
+    }).then(() => context.dispatch("ShowProducts")); User.delete(id)
+  },
+},
+)
