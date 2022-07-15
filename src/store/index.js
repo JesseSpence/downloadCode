@@ -75,7 +75,7 @@ export default createStore({
   createProduct: async (context, payload) => {
     const { artistName, artName, price, imgURL, description, category } =
       payload;
-    fetch("http://localhost:3000/pieces", {
+    fetch("http://localhost:3000/products", {
       method: "POST",
       body: JSON.stringify({
         artistName: artistName,
@@ -94,10 +94,10 @@ export default createStore({
   },
 
   // edit products
-  updatePieces: async (context, piece) => {
-    fetch("http://localhost:3000/pieces" + piece.id, {
+  updateProduct: async (context, product) => {
+    fetch("http://localhost:3000/products" + piece.id, {
       method: "PUT",
-      body: JSON.stringify(piece),
+      body: JSON.stringify(product),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
